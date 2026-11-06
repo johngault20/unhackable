@@ -1,102 +1,98 @@
 # unhackable curriculum
 
-This curriculum is for home users and local AI assistants learning to protect personal computers. It is grounded in public advisories and incident case studies. It teaches how to reduce risk and respond carefully—not how to attack systems.
+A defensive cybersecurity learning path for home users and local AI assistants. It uses public advisories and incident case studies to teach safer habits—not to teach people how to attack systems.
 
-## Mission
-
-**Learn → Scan → Review → Verify → Recover.**
-
-The name `unhackable` is aspirational, not a guarantee. No scan or AI can prove that a computer is immune to compromise. The project is educational, report-only where it examines the system, and designed to leave changes and decisions to the human user.
+> **Mission:** Learn how common security failures happen, reduce risk on your own computer, and be prepared to recover. `unhackable` is an aspirational name, not a guarantee.
 
 ## Learning outcomes
 
-By the end, a learner should be able to:
+By the end, learners should be able to:
 
-- explain common attacker behavior at a high level without reproducing it
-- distinguish a public incident from evidence about their own device
-- review basic Linux Mint security information and recognize missing data
-- configure safer account, update, firewall, and backup habits
-- enable appropriate sign-in alerts from online account providers
-- respond calmly to a suspicious event and know when to seek help
-- use local AI as an assistant while verifying its claims and protecting private data
+- Explain common attacker behavior at a high level without reproducing it.
+- Distinguish public incident reporting from evidence about their own device.
+- Review basic Linux Mint security information and recognize missing data.
+- Improve account, update, firewall, and backup habits.
+- Configure sign-in alerts with online account providers and understand the limits of local login monitoring.
+- Respond calmly to suspicious activity and know when to seek help.
+- Use local AI as an assistant while verifying claims and protecting private data.
 
-## Curriculum sequence
+## Course sequence
 
-### Module 1 — Security mindset and vocabulary
+### 1. Security mindset and vocabulary
 
-**Learn:** risk reduction, uncertainty, evidence, incident, availability, authentication, and least privilege.
+**Learn:** risk reduction, uncertainty, evidence, authentication, least privilege, and defense in depth.
 
-**Read:** `README.md`, `learning/README.md`, and [`glossary.md`](glossary.md).
+**Read:** [Project README](../README.md), [glossary](glossary.md), [learning guide](../learning/README.md).
 
-**Practice:** Explain why `UNKNOWN` is different from `LOW`, and why a news alert alone does not show that your PC is affected.
+**Practice:** Explain why `UNKNOWN` differs from `LOW`, and why a public advisory alone does not show that your PC is affected.
 
-### Module 2 — Common attack patterns (defender's view)
+### 2. Common attack patterns—defender’s view
 
 **Learn:** phishing, credential abuse, vulnerable services, supply-chain compromise, persistence, ransomware, and data theft at a high level.
 
-**Read:** `learning/how-attack-code-works-defensively.md`, `learning/phishing-and-credential-abuse.md`, and [`attack-pattern-catalogue.md`](attack-pattern-catalogue.md).
+**Read:** [Defensive code overview](../learning/how-attack-code-works-defensively.md), [phishing and credentials](../learning/phishing-and-credential-abuse.md), [attack-pattern catalogue](attack-pattern-catalogue.md).
 
-**Practice:** For each pattern, name a prevention measure and a safe follow-up check. Do not run exploit code or test other people's systems.
+**Practice:** For each pattern, name a prevention measure and a safe follow-up check. Do not run exploit code or test systems without authorization.
 
-### Module 3 — Real-world incidents and lessons
+### 3. Real-world incidents
 
-**Learn:** compare what a public source says with what a defender can reasonably infer.
+**Learn:** Separate source-backed facts from defensive interpretation.
 
-**Read:** `cases/README.md` and `cases/lessons-matrix.md`.
+**Read:** [Incident cases](../cases/README.md) and [lessons matrix](../cases/lessons-matrix.md).
 
-**Practice:** Pick one case and write down a source-backed fact, a defensive lesson, and one reason it might not apply to a home Mint PC.
+**Practice:** For one case, identify one fact stated by the primary source, one defensive lesson, and one reason it might not apply to a home Mint PC.
 
-### Module 4 — Linux Mint baseline and hardening
+### 4. Linux Mint baseline and hardening
 
-**Learn:** updates, firewall awareness, software inventory, startup services, listening sockets, browser hygiene, and recoverability.
+**Learn:** Updates, firewall awareness, software inventory, startup services, listening sockets, browser hygiene, and recovery.
 
-**Read:** `learning/linux-mint-home-hardening.md`.
+**Read:** [Linux Mint home checklist](../learning/linux-mint-home-hardening.md).
 
-**Practice:** Run `bash scripts/security_scan.sh`, inspect `logs/last_scan.txt`, then run `python3 scripts/risk_review.py`. Treat missing information as unknown and review findings before changing anything.
+**Practice:** Run `bash scripts/security_scan.sh`, inspect `logs/last_scan.txt`, and run `python3 scripts/risk_review.py`. Treat missing information as unknown and review findings before changing anything.
 
-### Module 5 — Account protection and sign-in alerts
+### 5. Account security and login alerts
 
-**Learn:** local computer authentication differs from sign-in to an online provider. The provider is the right source for “Was this you?” account alerts.
+**Learn:** Local computer authentication differs from sign-ins to email, banking, and cloud services. The provider is the right source for online-account “Was this you?” alerts.
 
-**Read:** [`../docs/login-alerts.md`](../docs/login-alerts.md) and `learning/phishing-and-credential-abuse.md`.
+**Read:** [Login alert guide](../docs/login-alerts.md) and [phishing and credential abuse](../learning/phishing-and-credential-abuse.md).
 
-**Practice:** Enable sign-in notifications and MFA in the official security settings of important providers. Optionally run `python3 scripts/login_alert.py` to see selected local failed-login events. Never give this project account passwords, MFA codes, session cookies, or recovery codes.
+**Practice:** Enable sign-in notifications and MFA through the official settings of important account providers. Optionally run `python3 scripts/login_alert.py` for selected local failed-authentication events. Never give the project passwords, MFA codes, session cookies, or recovery codes.
 
-### Module 6 — Ransomware, backups, and recovery
+### 6. Ransomware, backups, and recovery
 
-**Learn:** availability, protected backups, restore tests, and calm first response.
+**Learn:** Availability, protected backups, restore tests, and calm first response.
 
-**Read:** `learning/ransomware-and-backups.md` and `../docs/home-user-incident-playbook.md`.
+**Read:** [Ransomware and backups](../learning/ransomware-and-backups.md) and [home-user response playbook](../docs/home-user-incident-playbook.md).
 
 **Practice:** Identify important files, confirm they are backed up, and check that you know how to restore a copy.
 
-### Module 7 — AI-assisted learning
+### 7. AI-assisted learning
 
-**Learn:** untrusted input, source verification, local model limitations, and human oversight.
+**Learn:** Untrusted input, source verification, model limitations, and human oversight.
 
-**Read:** `curriculum/ai-safety-rules.md` and `learning/README.md`.
+**Read:** [AI safety rules](ai-safety-rules.md) and [learning guide](../learning/README.md).
 
-**Practice:** Run `python3 scripts/daily_intel.py`, `python3 scripts/learning_digest.py`, and `python3 scripts/ai_guard.py`; verify at least one statement against its original source. Do not paste sensitive logs into services you do not control.
+**Practice:** Generate a local digest and AI summary, then verify at least one claim against its original source. Avoid sending sensitive logs to services you do not control.
 
-### Module 8 — Safe lab practice and project roadmap
+### 8. Safe lab practice
 
 **Learn:** VM isolation, clean snapshots, no personal data in a lab, and authorized practice.
 
-**Read:** `../docs/safe-decoy-vm.md` and `project-roadmap.md`.
+**Read:** [Safe decoy VM plan](../docs/safe-decoy-vm.md) and [project roadmap](project-roadmap.md).
 
-**Practice:** Verify VM network mode and host integration settings before any exercise. Use benign, intentionally designed training material only.
+**Practice:** Confirm network mode and host-integration settings before any exercise. Use benign, intentionally designed training material only.
 
 ## Suggested beginner workflow
 
-1. Read the mission, glossary, and home-user hardening checklist.
-2. Review account-provider security settings and enable sign-in alerts and MFA where available.
-3. Run the local scan and inspect the raw report.
-4. Generate the risk-review report; treat it as a prompt for human review, not a verdict.
-5. Optionally run the local login alert monitor and confirm it can read journal events.
+1. Read the mission and glossary.
+2. Review the hardening checklist and account-provider security settings.
+3. Run the local scan and inspect its raw report.
+4. Generate the review priority; treat it as a prompt for human review, not a verdict.
+5. Optionally run the local login alert monitor and check whether it can read journal events.
 6. Fetch public intelligence, build a digest, and compare claims with original advisories.
-7. Review incident lessons, backup readiness, and the home-user response playbook.
-8. Keep experiments isolated and authorized.
+7. Study an incident case and review backup readiness.
+8. Keep any lab isolated and authorized.
 
-## Safety mandate
+## Teaching and safety rules
 
-This curriculum is defensive and educational. It avoids exploit instructions, malware, credential theft, evasion, destructive actions, and targeting guidance. AI may summarize and explain, but must not act autonomously, make unsupported compromise claims, or change system settings. People remain responsible for verifying sources and choosing actions.
+This curriculum avoids exploit instructions, malware, credential theft, evasion, destructive actions, and targeting guidance. AI may summarize and explain, but must not act autonomously, make unsupported compromise claims, or change system settings. People remain responsible for verifying sources and choosing actions.

@@ -1,110 +1,136 @@
 # unhackable
 
-**unhackable is a defensive cybersecurity learning project—not a promise that any computer can be made impossible to hack.** The name is aspirational. The real goal is to help people understand common security failures, learn from real incidents, and practice safer habits that reduce the chance and impact of a compromise on their own computer.
+> **Learn → Scan → Review → Verify → Recover**
+>
+> `unhackable` is a defensive cybersecurity learning project for understanding real-world incidents and reducing risk on a personal Linux Mint computer. The name is aspirational—not a promise that any computer can be made impossible to compromise.
 
-The project combines a report-only local security scan with public advisories, curated incident case studies, and cautious AI-assisted explanations. It is designed to teach people and help AI explain defensive concepts. It is not an autonomous security agent: reports do not prove a machine is compromised, replace trusted guidance, or automatically change settings.
+It brings together a local, report-only system scan, public advisories, curated incident lessons, and optional AI-assisted explanations. The aim is to help people make informed, safer decisions—not to act as an autonomous security agent.
 
-## Learn → Scan → Review → Verify → Recover
+## Start here
 
-1. **Learn** from the [curriculum](curriculum/README.md), incident cases, and defensive guides.
-2. **Scan** local system state with a read-only report.
-3. **Review** the limited findings and treat missing data as unknown.
-4. **Verify** important claims with official sources and your own judgment.
-5. **Recover** using tested backups and a calm incident-response plan.
+1. **Learn** — Read the [beginner curriculum](curriculum/README.md) and [glossary](curriculum/glossary.md).
+2. **Harden** — Review the [Linux Mint home checklist](learning/linux-mint-home-hardening.md); make changes only when you understand them.
+3. **Scan** — Run the local report and inspect its output:
+   ```bash
+   bash scripts/security_scan.sh
+   ```
+4. **Review** — Generate a limited review priority:
+   ```bash
+   python3 scripts/risk_review.py
+   ```
+5. **Learn from incidents** — Browse the [case library](cases/README.md) and [lessons matrix](cases/lessons-matrix.md).
+6. **Verify** — Check important claims against the linked official advisories before acting.
+7. **Recover** — Maintain and test backups; use the [home-user incident playbook](docs/home-user-incident-playbook.md) if something seems wrong.
 
-## What it does
+Optional: Fetch public feed entries and create a local learning digest:
 
-- Reports local security context such as firewall status, listening sockets, enabled services, authentication-log excerpts, and available package updates.
-- Optionally monitors selected local journal events and displays desktop notifications for likely failed sign-in attempts. This is best-effort and does not monitor web accounts.
-- Fetches recent entries from configured public cyber feeds.
-- Keeps curated, defensive case studies of real incidents in `cases/`.
-- Explains common attacker code behaviors at a conceptual level and focuses on how defenders reduce risk and notice warning signs. It does not provide attack scripts or exploit instructions.
-- Can ask a local Ollama model to summarize local observations and explain lessons from the case studies and feed entries.
-- Offers a small, transparent scan review priority (`LOW`, `MEDIUM`, `HIGH`, or `UNKNOWN`) with evidence and limitations.
-- Includes practical learning on phishing, credential abuse, ransomware, local hardening, incident response, and isolated VM use.
+```bash
+python3 scripts/daily_intel.py
+python3 scripts/learning_digest.py
+```
+
+If you have Ollama and a local model installed, you can also create an AI-assisted summary:
+
+```bash
+python3 scripts/ai_guard.py
+```
+
+The local login alert monitor is optional and separate from account-provider alerts:
+
+```bash
+python3 scripts/login_alert.py
+```
+
+See [Login alerts](docs/login-alerts.md) for details.
+
+## Mission
+
+Help people understand how common security failures happen, learn from public incident reports, reduce unnecessary exposure on their own computer, and prepare to recover safely. The project is for education and personal defense; it is not a guarantee of security.
+
+## What this project does
+
+- Collects a local snapshot of selected system information, including firewall status, listening sockets, enabled services, authentication-log excerpts, and available package updates.
+- Offers a small, transparent, report-only review priority: `LOW`, `MEDIUM`, `HIGH`, or `UNKNOWN`.
+- Fetches configured public cyber-news and advisory feeds into local files.
+- Provides curated case studies and practical learning about phishing, credential abuse, ransomware, hardening, and recovery.
+- Can ask a local Ollama model to explain scan results and incident lessons.
+- Can optionally show desktop notifications for selected local failed-authentication events, when system journal access and a desktop session allow it.
 
 ## What it does not do
 
-- Guarantee protection or make a computer “unhackable.”
-- Determine that a public incident has affected your computer based only on news or feed matches.
-- Monitor sign-ins to websites, email, banking, or cloud accounts. Configure “Was this you?” or new-sign-in alerts directly with each provider in its official security settings.
-- Ask for or store account passwords, MFA codes, session cookies, recovery codes, or provider tokens.
-- Train or continuously improve the local AI model. Each summary uses the local files available at that time.
-- Automatically remediate findings, run offensive tests, or authorize activity against other systems.
-- Include working exploit code, credential theft tools, malware, or instructions for attacking real systems.
+- Make a device “unhackable,” prove a device is safe, or diagnose compromise.
+- Treat a public incident or feed match as proof that your computer is affected.
+- Monitor website, email, banking, or cloud-account sign-ins. For “Was this you?” alerts, use the provider’s official account-security settings.
+- Ask for or store your online account passwords, MFA codes, session cookies, recovery codes, or provider tokens.
+- Automatically block addresses, disable accounts, delete files, or change system settings.
+- Train the AI model continuously or make AI output authoritative.
+- Provide working exploit code, malware, credential theft tools, or instructions for targeting systems.
 
-## Repository layout
+## Quick setup
 
-- `scripts/security_scan.sh` - local Linux Mint security report
-- `scripts/login_alert.py` - optional local failed-authentication desktop alert monitor
-- `scripts/daily_intel.py` - fetch public feed entries into local JSON
-- `scripts/ai_guard.py` - ask local Ollama for a cautious learning summary
-- `scripts/risk_review.py` - classify scan output with a small, report-only rule set
-- `scripts/learning_digest.py` - combine curated lessons and available feed metadata into a local learning document
-- `cases/` - curated incident case studies and a lessons matrix
-- `learning/` - high-level defensive lessons
-- `curriculum/` - modules, glossary, safety rules, and project roadmap
-- `docs/` - login-alert guide, safe VM plan, and home-user incident-response guidance
-- `requirements.txt` - Python dependencies
-- `config/` - example local-only Ollama service and optional user login-alert service
-
-Generated reports and fetched feed data are local and git-ignored.
-
-## Quick start
-
-1. Create a virtual environment and install dependencies:
+1. Install Python and create a virtual environment:
    ```bash
    python3 -m venv .venv
    . .venv/bin/activate
    pip install -r requirements.txt
    ```
-
-2. Run the local report:
+2. Run the scan and review:
    ```bash
    bash scripts/security_scan.sh
-   ```
-
-3. Generate the local scan review priority:
-   ```bash
    python3 scripts/risk_review.py
    ```
-
-4. Optionally monitor local failed sign-in events:
+3. Optionally start local failed-login notifications:
    ```bash
    python3 scripts/login_alert.py
    ```
-
-   See [`docs/login-alerts.md`](docs/login-alerts.md) for desktop notification requirements and an optional user service. For online-account “Was this you?” notices, configure alerts with the account provider; this local script cannot see website sign-ins.
-
-5. Fetch public feed entries and generate learning materials:
+4. Optionally fetch public intel, build a digest, and generate a local AI summary:
    ```bash
    python3 scripts/daily_intel.py
    python3 scripts/learning_digest.py
-   ```
-
-6. If Ollama is installed locally and listening on loopback, generate an AI-assisted learning summary:
-   ```bash
    python3 scripts/ai_guard.py
    ```
 
-The learning digest is saved to `intel/learning_digest.md`, the AI summary to `intel/learning_summary.md`, and the scan review to `intel/risk_review.md`. The digest works offline and case studies remain available if a feed is unavailable. Feed coverage varies and does not replace checking original advisories.
+Generated reports and fetched feed data are local and git-ignored. Feed coverage is not comprehensive. Ollama must be installed with the selected model available; keep its service on loopback only.
 
-## Risk-review interpretation
+## Understand the review priority
 
-The review script uses a small set of visible text checks: reported UFW status, availability of listening-socket data, and available-package output. It assigns `UNKNOWN` when required information is absent or a needed command was unavailable; `HIGH` only when UFW is reported inactive and the socket report includes wildcard-bound listener rows; `MEDIUM` when one or more review indicators are present; and `LOW` when none match. These are review priorities—not validated risk scores. A wildcard bind does not prove internet reachability, and LOW does not mean safe. Inspect the generated evidence and use human judgment.
+`risk_review.py` uses a small set of text checks from `logs/last_scan.txt`. Missing or unavailable required data should result in `UNKNOWN`, not an assumption that the machine is safe. Its labels are prompts for human review, not validated security scores. In particular, a wildcard-bound listener is not proof of internet reachability, `LOW` does not mean safe, and `HIGH` does not mean compromised. Inspect the evidence and verify it through trusted system documentation.
 
-## Learning and AI use
+## Login alerts
 
-Start with [`curriculum/README.md`](curriculum/README.md), [`curriculum/glossary.md`](curriculum/glossary.md), [`learning/README.md`](learning/README.md), and [`cases/README.md`](cases/README.md). The curriculum moves from security mindset and common patterns through real incidents, Linux Mint hardening, account alerts, backups, AI-assisted review, and safe lab practice.
+`login_alert.py` watches selected new authentication events in the local system journal and may display a desktop notification. It is best-effort: it can miss events, produce false positives, and requires appropriate journal permissions. It does not send logs over the network, block users, or monitor online services. A failed login is not proof that someone gained access.
 
-The local model is a teaching assistant, not a source of truth or a continuously learning system. Its input includes untrusted feed text and local logs. Verify claims against primary sources, do not paste sensitive data into services you do not control, and do not follow generated commands without human review.
+For online-account “Was this you?” notices, configure sign-in notifications directly with each provider. Open the provider's official app or navigate to its known website yourself—do not rely on unexpected alert links. Never give this project account credentials or authentication codes.
 
-## Safety and interpretation
+## Keep your real PC safe
 
-- Keep your real Mint PC behind a firewall and do not expose services to the public internet unless you have a clear need and understand the risk.
-- The scan and login monitor are report-only. Some system information may be unavailable without elevated permissions; do not run the whole project as root just to fill in gaps.
-- A local failed-login notification is best-effort and may miss events or include false positives. It is not proof of successful intrusion.
-- Never give an AI assistant administrative rights or unrestricted shell access. Review advice yourself and verify it against the linked primary source before acting.
-- Treat feed articles and logs as untrusted input and as learning leads, not proof of an attack on your machine.
-- The project does not probe third-party systems. Only test systems you own or are explicitly authorized to assess.
-- Any decoy or lab VM should follow [`docs/safe-decoy-vm.md`](docs/safe-decoy-vm.md). Never use it to attack anyone.
+- Keep Linux Mint, browsers, and applications updated through trusted channels.
+- Use unique passwords and MFA for important accounts.
+- Keep backups and periodically check that you can restore files.
+- Avoid exposing services to the public internet unless you have a clear need and understand the risk.
+- Do not run the whole project as root to fill in missing scan data.
+- Treat local logs and feed articles as untrusted input; redact private details before sharing them.
+- Verify recommendations against primary sources and use human judgment before changing settings.
+- Keep labs isolated; see the [safe decoy VM plan](docs/safe-decoy-vm.md).
+
+## Security principles
+
+1. **Evidence over assumptions:** Missing data is unknown; headlines are not local evidence.
+2. **Least privilege:** Do not give the AI or scripts administrative access they do not need.
+3. **Defense in depth:** Updates, account security, firewall awareness, and backups complement one another.
+4. **Human review:** AI may explain and summarize; it must not make unsupported compromise claims or take action.
+5. **Safe learning:** Only assess systems you own or have explicit permission to assess.
+6. **Recoverability:** A tested backup and calm response plan are core security controls.
+
+## Learning resources
+
+- [Full curriculum](curriculum/README.md)
+- [Glossary](curriculum/glossary.md)
+- [Incident case library](cases/README.md)
+- [How attack code works—defensively](learning/how-attack-code-works-defensively.md)
+- [Phishing and credential abuse](learning/phishing-and-credential-abuse.md)
+- [Ransomware and backups](learning/ransomware-and-backups.md)
+- [Home-user incident response](docs/home-user-incident-playbook.md)
+- [Login alerts](docs/login-alerts.md)
+- [Safe decoy VM plan](docs/safe-decoy-vm.md)
+
