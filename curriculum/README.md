@@ -1,6 +1,6 @@
 # unhackable curriculum
 
-A defensive cybersecurity learning path for home users and local AI assistants. It uses public advisories, incident case studies, and safe fictional exercises to teach safer habits—not to teach people how to attack systems.
+A defensive cybersecurity learning path for home users and local AI assistants. It uses public advisories, incident case studies, and safe local exercises to teach safer habits—not to teach people how to attack systems.
 
 > **Mission:** Learn how common security failures happen, reduce risk on your own computer, and be prepared to recover. `unhackable` is an aspirational name, not a guarantee.
 
@@ -13,7 +13,7 @@ By the end, learners should be able to:
 - Review basic Linux Mint security information and recognize missing data.
 - Improve account, update, firewall, and backup habits.
 - Configure sign-in alerts with online account providers and understand the limits of local login monitoring.
-- Explain why passwords must not be exposed or entered into untrusted demos.
+- Assess a candidate password locally without exposing it to a website or service.
 - Respond calmly to suspicious activity and know when to seek help.
 - Use local AI as an assistant while verifying claims and protecting private data.
 
@@ -59,13 +59,13 @@ By the end, learners should be able to:
 
 **Practice:** Enable sign-in notifications and MFA through the official settings of important account providers. Optionally run `python3 scripts/login_alert.py` for selected local failed-authentication events. Never give the project passwords, MFA codes, session cookies, or recovery codes.
 
-### 6. Password safety simulation (fictional data only)
+### 6. Conservative offline password estimate
 
-**Learn:** A password shown or handled by an untrusted page can be exposed; real passwords should never be typed into security demos. A safe demo can teach the risk using fictional, fixed data without collecting credentials.
+**Learn:** Password length and uniqueness matter; no simple strength meter can guarantee safety or predict how quickly a password could be guessed. A password entered into a website or untrusted application may be exposed.
 
-**Read:** [Password safety simulation](../learning/password-safety-demo.html).
+**Read:** [Offline password checker guide](../learning/password-checker.md).
 
-**Practice:** Run the static HTML file locally, select the demo scenarios, and observe the explanation. The page has no password field, makes no network requests, and uses only a prewritten fake credential. Never substitute a personal or reused password.
+**Practice:** On a trusted personal device, run `python3 scripts/password_check.py` and type a candidate into the masked field. The script estimates locally and does not transmit, print, or save the value. Do not use a shared or suspected-compromised device, and never enter a password into online testers, chat, or issue reports.
 
 ### 7. Ransomware, backups, and recovery
 
@@ -98,11 +98,11 @@ By the end, learners should be able to:
 3. Run the local scan and inspect its raw report.
 4. Generate the review priority; treat it as a prompt for human review, not a verdict.
 5. Optionally run the local login alert monitor and check whether it can read journal events.
-6. Try the fictional password safety simulation; never enter a real credential.
+6. Use the offline password checker only on a trusted device and only if needed.
 7. Fetch public intelligence, build a digest, and compare claims with original advisories.
 8. Study an incident case and review backup readiness.
 9. Keep any lab isolated and authorized.
 
 ## Teaching and safety rules
 
-This curriculum avoids exploit instructions, malware, credential theft, evasion, destructive actions, and targeting guidance. Password demonstrations must use fictional data only and must never collect or reveal user-entered secrets. AI may summarize and explain, but must not act autonomously, make unsupported compromise claims, or change system settings. People remain responsible for verifying sources and choosing actions.
+This curriculum avoids exploit instructions, malware, credential theft, evasion, destructive actions, and targeting guidance. Password tools must not transmit or persist entered secrets, and should only be used on a trusted device. AI may summarize and explain, but must not act autonomously, make unsupported compromise claims, or change system settings. People remain responsible for verifying sources and choosing actions.

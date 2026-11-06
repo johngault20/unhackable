@@ -57,14 +57,14 @@ See [Login alerts](docs/login-alerts.md) for details.
 This is a suggested pace, not a certification or security guarantee. You can do the reading without changing system settings.
 
 - **Day 1 — Understand the goal:** Read this page, the [curriculum](curriculum/README.md), and the [glossary](curriculum/glossary.md). Write down one thing the project can and cannot tell you.
-- **Day 2 — Protect accounts:** Review important account providers' official security pages. Enable MFA and sign-in alerts where available. Never enter real credentials into this repository's demos or scripts.
+- **Day 2 — Protect accounts:** Review important account providers' official security pages. Enable MFA and sign-in alerts where available. Never enter real credentials into repository demos.
 - **Day 3 — Learn from incidents:** Read one case study and its original advisory. Separate source-backed facts from your own defensive lesson.
 - **Day 4 — Review your baseline:** Read the hardening checklist, run the local scan, and inspect its report. Don't run the project as root to fill gaps.
 - **Day 5 — Practice safe interpretation:** Run the risk review and optional local login monitor. Treat `UNKNOWN` as missing evidence, not as safe.
 - **Day 6 — Prepare recovery:** Identify important files, check your backups, and confirm you know how to restore a file.
 - **Day 7 — Review and reflect:** Generate the local learning digest or AI summary, verify one claim against its source, and note one safe habit to maintain.
 
-The [password safety simulation](learning/password-safety-demo.html) is an optional browser-only exercise. It uses a fixed fictional credential and never asks for, reads, or transmits a real password.
+For a conservative, offline estimate of a candidate password, see the [password checker guide](learning/password-checker.md) and run `python3 scripts/password_check.py` on a trusted personal device. It does not attempt logins, reveal the candidate, or estimate crack time.
 
 ## Mission
 
@@ -80,6 +80,7 @@ A useful security goal is not to become invincible. It is to be **informed, hard
 - Provides curated case studies and practical learning about phishing, credential abuse, ransomware, hardening, and recovery.
 - Can ask a local Ollama model to explain scan results and incident lessons.
 - Can optionally show desktop notifications for selected local failed-authentication events, when system journal access and a desktop session allow it.
+- Provides an offline, conservative password-quality estimate that does not transmit or persist the candidate.
 
 ## What it does not do
 
@@ -108,7 +109,11 @@ A useful security goal is not to become invincible. It is to be **informed, hard
    ```bash
    python3 scripts/login_alert.py
    ```
-4. Optionally fetch public intel, build a digest, and generate a local AI summary:
+4. Optionally check a candidate password locally:
+   ```bash
+   python3 scripts/password_check.py
+   ```
+5. Optionally fetch public intel, build a digest, and generate a local AI summary:
    ```bash
    python3 scripts/daily_intel.py
    python3 scripts/learning_digest.py
@@ -120,6 +125,10 @@ Generated reports and fetched feed data are local and git-ignored. Feed coverage
 ## Understand the review priority
 
 `risk_review.py` uses a small set of text checks from `logs/last_scan.txt`. Missing or unavailable required data should result in `UNKNOWN`, not an assumption that the machine is safe. Its labels are prompts for human review, not validated security scores. In particular, a wildcard-bound listener is not proof of internet reachability, `LOW` does not mean safe, and `HIGH` does not mean compromised. Inspect the evidence and verify it through trusted system documentation.
+
+## Password checker limitations
+
+The optional checker is intentionally conservative but is not literally “twice as harsh” as a standard, because no universal strength score exists to double. It uses local heuristics for length, common examples, and a few obvious patterns. It cannot determine whether a password is reused, exposed, or accepted by an account provider, and it does not estimate how long a real attacker would take. Prefer a unique password-manager-generated password and MFA. Do not use the tool on a shared or suspected-compromised device.
 
 ## Login alerts
 
@@ -153,7 +162,7 @@ For online-account “Was this you?” notices, configure sign-in notifications 
 - [Glossary](curriculum/glossary.md)
 - [Incident case library](cases/README.md)
 - [How attack code works—defensively](learning/how-attack-code-works-defensively.md)
-- [Password safety simulation (fictional data only)](learning/password-safety-demo.html)
+- [Conservative password checker guide](learning/password-checker.md)
 - [Phishing and credential abuse](learning/phishing-and-credential-abuse.md)
 - [Ransomware and backups](learning/ransomware-and-backups.md)
 - [Home-user incident response](docs/home-user-incident-playbook.md)
