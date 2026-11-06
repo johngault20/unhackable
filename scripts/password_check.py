@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
-"""Strict, offline password-quality estimate with a masked Tkinter UI.
+"""Offline password-quality estimate with a masked Tkinter interface.
 
-This is a heuristic, not a crack-time calculator or breach check. The entered
-candidate is assessed in process memory; this program does not transmit, save,
-print, or log it. Do not use an existing password or a shared/untrusted device.
+This educational heuristic is not a crack-time calculator or breach check. The
+candidate is assessed in process memory only; it is not transmitted, saved,
+printed, or logged. Use a new candidate on a trusted personal device only.
 """
 
 from __future__ import annotations
 
 import re
+import unicodedata
 
-# A small educational denylist, not a complete list of compromised passwords.
-COMMON_PASSWORDS = {
-    "password", "password1", "password12", "password123", "password1234",
-    "123456", "1234567", "12345678", "123456789", "1234567890",
-    "qwerty", "qwerty123", "letmein", "welcome", "admin", "administrator",
-    "iloveyou", "abc123", "changeme", "dragon", "monkey", "football",
-    "sunshine", "princess", "trustno1", "passw0rd", "p@ssw0rd",
-}
+# Small illustrative denylist. It is not a breached-password database.
+COMMON_FRAGMENTS = (
+    "password", "letmein", "welcome", "qwerty", "admin", "changeme",
+    "iloveyou", "trustno1", "monkey", "dragon", "football", "sunshine",
+    "princess", "baseball", "master", "login",
+)
 SEQUENCES = (
     "abcdefghijklmnopqrstuvwxyz",
     "0123456789",
@@ -29,15 +28,14 @@ LABELS = ("Very weak", "Weak", "Fair", "Good", "Strong", "Very strong")
 LEET_TRANSLATION = str.maketrans({"0": "o", "1": "i", "3": "e", "4": "a", "5": "s", "7": "t", "@": "a", "$": "s"})
 
 
-def normalized_candidate(password: str) -> str:
-    """Normalize common separators and substitutions for heuristic checks."""
-    value = password.casefold().translate(LEET_TRANSLATION)
+def normalize_candidate(candidate: str) -> str:
+    """Normalize common substitutions and separators for pattern checks only."""
+    value = unicodedata.normalize("NFKC", candidate).casefold().translate(LEET_TRANSLATION)
     return re.sub(r"[^a-z0-9]", "", value)
 
 
-def has_obvious_pattern(password: str) -> bool:
-    """Detect easy-to-spot repeats, runs, and keyboard/alphabet sequences."""
-    value = normalized_candidate(password)
+def has_obvious_pattern(candidate: str) -> bool:
+    value = normalize_candidate(candidate)
     if not value:
         return False
     if re.search(r"(.)\1{3,}", value):
@@ -45,64 +43,68 @@ def has_obvious_pattern(password: str) -> bool:
     if re.search(r"0123|1234|2345|3456|4567|5678|6789|9876|8765|7654|6543|5432|4321|3210", value):
         return True
     for sequence in SEQUENCES:
-        for candidate in (sequence, sequence[::-1]):
-            if any(candidate[index:index + 4] in value for index in range(len(candidate) - 3)):
+        for direction in (sequence, sequence[::-1]):
+            if any(direction[index:index + 4] in value for index in range(len(direction) - 3)):
                 return True
-    # Flag a repeated block such as wordword or abcdabcd.
-    for block_size in range(2, min(len(value) // 2, 8) + 1):
-        if len(value) >= block_size * 2 and value[:block_size] * (len(value) // block_size) == value:
+    # Penalize a candidate made entirely from a short repeated block.
+    for size in range(1, min(len(value) // 2, 8) + 1):
+        if len(value) % size == 0 and value == value[:size] * (len(value) // size):
             return True
+    # A year-like suffix and common substitutions are predictable pattern cues.
+    if re.search(r"(?:19|20)\d{2}$", value):
+        return True
     return False
 
 
-def assess_password(password: str) -> dict:
-    """Return a conservative quality estimate; never include the secret in output."""
-    if not password:
+def assess_password(candidate: str) -> dict:
+    """Return a conservative quality label and advice without echoing candidate."""
+    if not candidate:
         return {
             "score": 0,
-            "label": "Enter a new candidate to see the estimate",
+            "label": "Enter a new candidate for an estimate",
             "advice": "Nothing is sent or saved. Use this only on a trusted personal device.",
         }
 
-    normalized = normalized_candidate(password)
+    normalized = normalize_candidate(candidate)
     advice = []
-    if normalized in COMMON_PASSWORDS or any(
-        common in normalized for common in ("password", "letmein", "welcome", "qwerty", "admin")
-    ):
-        score = 0
-        advice.append("This resembles a common or predictable password. Use a unique password-manager-generated candidate instead.")
+    score = 0
+
+    if any(fragment in normalized for fragment in COMMON_FRAGMENTS):
+        advice.append("A common word or predictable password fragment was detected; prefer a unique, randomly generated candidate.")
     else:
-        length = len(password)
-        # Strict, deliberately simple length bands. This is not a guess-time estimate.
+        length = len(candidate)
+        # Length-focused bands avoid rewarding cosmetic symbol substitutions.
         if length < 12:
             score = 0
-            advice.append("Too short for this strict estimate. Prefer a long, unique password or passphrase.")
+            advice.append("Too short for this conservative estimate. Prefer a much longer unique password or passphrase.")
         elif length < 16:
             score = 1
-            advice.append("Aim for at least 16 characters; longer is generally preferable when the service allows it.")
+            advice.append("Aim for at least 16 characters; longer is preferable when the service allows it.")
         elif length < 20:
             score = 2
         elif length < 24:
             score = 3
-        elif length < 28:
+        elif length < 30:
             score = 4
         else:
             score = 5
 
-        if has_obvious_pattern(password):
+        if has_obvious_pattern(candidate):
             score = max(0, score - 2)
-            advice.append("An obvious sequence, repetition, or keyboard pattern was detected; choose an unpredictable candidate.")
+            advice.append("A sequence, repeated block, repeated character, or year-like pattern was detected.")
 
-        if len(set(password)) <= 2 and length >= 8:
+        if len(set(candidate)) <= 2 and len(candidate) >= 8:
             score = max(0, score - 2)
-            advice.append("Very low character variety makes the candidate predictable; choose a different one.")
+            advice.append("Very low character variety makes this candidate predictable.")
 
-        if length < 20 and score > 0:
-            advice.append("For this deliberately strict rating, prefer a longer candidate rather than relying on symbol substitutions.")
+        words = [part for part in re.split(r"[^A-Za-z]+", candidate) if part]
+        if len(words) >= 2 and len({word.casefold() for word in words}) < len(words):
+            score = max(0, score - 1)
+            advice.append("Repeated words are predictable; choose unrelated words or use a password manager.")
 
     score = max(0, min(5, score))
-    advice.append("Use a different password for every account and store it in a reputable password manager.")
-    advice.append("This estimate cannot check reuse, breach exposure, service security, or real-world guessing time; a high score is not a guarantee.")
+    advice.append("Use a different password for every account; a reputable password manager can generate and store unique values.")
+    advice.append("This heuristic cannot check reuse, breach exposure, service security, or real-world guessing time. A high score is not a guarantee.")
     return {"score": score, "label": LABELS[score], "advice": " ".join(advice)}
 
 
@@ -115,31 +117,30 @@ def main() -> int:
         return 1
 
     root = tk.Tk()
-    root.title("Strict offline password check — unhackable")
-    root.geometry("620x440")
+    root.title("Offline password-quality estimate — unhackable")
+    root.geometry("640x450")
     root.minsize(480, 380)
-
     frame = ttk.Frame(root, padding=18)
     frame.pack(fill="both", expand=True)
-    ttk.Label(frame, text="Strict offline password-quality estimate", font=("TkDefaultFont", 16, "bold")).pack(anchor="w")
+
+    ttk.Label(frame, text="Offline password-quality estimate", font=("TkDefaultFont", 16, "bold")).pack(anchor="w")
     ttk.Label(
         frame,
-        text=("Use only a new candidate on a trusted personal device—not an existing password. "
-              "The masked value is checked locally and is not transmitted, saved, printed, or logged by this program."),
-        wraplength=560,
+        text=("Use only a new candidate on a trusted device—not a password already used for an account. "
+              "The masked candidate is checked locally and is not transmitted, saved, printed, or logged."),
+        wraplength=580,
     ).pack(anchor="w", pady=(8, 14))
 
     candidate_var = tk.StringVar()
-    entry = ttk.Entry(frame, textvariable=candidate_var, show="•", width=54)
+    entry = ttk.Entry(frame, textvariable=candidate_var, show="•", width=56)
     entry.pack(fill="x", pady=(0, 10))
     entry.focus_set()
-
     result_var = tk.StringVar(value="No candidate entered")
     ttk.Label(frame, textvariable=result_var, font=("TkDefaultFont", 12, "bold")).pack(anchor="w")
     meter = ttk.Progressbar(frame, maximum=5, mode="determinate")
     meter.pack(fill="x", pady=8)
-    advice_var = tk.StringVar(value="The field is masked. No network request or file write is performed.")
-    ttk.Label(frame, textvariable=advice_var, wraplength=560).pack(anchor="w", pady=(2, 12))
+    advice_var = tk.StringVar(value="No network request or file write is performed.")
+    ttk.Label(frame, textvariable=advice_var, wraplength=580).pack(anchor="w", pady=(2, 12))
 
     def update_estimate(*_args) -> None:
         result = assess_password(candidate_var.get())
@@ -161,10 +162,9 @@ def main() -> int:
     ttk.Label(
         frame,
         text=("No password is perfectly safe. Prefer a unique password-manager-generated value and enable MFA. "
-              "This is a conservative teaching heuristic—not a crack-time prediction or breach check."),
-        wraplength=560,
+              "This is a teaching heuristic—not a crack-time prediction or breach check."),
+        wraplength=580,
     ).pack(anchor="w", side="bottom", pady=(12, 0))
-
     root.mainloop()
     return 0
 
