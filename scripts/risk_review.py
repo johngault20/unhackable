@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a cautious, report-only review priority from local scan output."""
+"""Create a cautious, report-only review priority from the local scan output."""
 
 import sys
 from datetime import datetime, timezone
@@ -15,7 +15,8 @@ UNAVAILABLE_MARKERS = (
 )
 
 
-def section(text: str, heading: str) -> str:
+def get_section(text: str, heading: str) -> str:
+    """Return a section delimited by the scan script's --- Heading --- markers."""
     marker = f"--- {heading} ---"
     start = text.find(marker)
     if start < 0:
@@ -25,106 +26,142 @@ def section(text: str, heading: str) -> str:
     return text[start:] if end < 0 else text[start:end]
 
 
-def evaluate(report: str):
-    firewall = section(report, "Firewall").strip()
-    sockets = section(report, "Listening sockets").strip()
-    upgrades = section(report, "Upgradable packages").strip()
+def analyze_scan(report: str) -> dict:
+    """Analyze known scan fields; missing data is UNKNOWN, never assumed safe."""
+    firewall = get_section(report, "Firewall").strip()
+    sockets = get_section(report, "Listening sockets").strip()
+    upgrades = get_section(report, "Upgradable packages").strip()
 
     if not report.strip() or not firewall or not sockets or not upgrades:
-        return "UNKNOWN", ["The scan report or one or more required sections are missing."], [
-            "Run scripts/security_scan.sh and check whether firewall, listening-socket, and package sections were collected."
-        ]
+        return {
+            "priority": "UNKNOWN",
+            "evidence": ["The scan report or one or more required sections are missing."],
+            "next_checks": [
+                "Run scripts/security_scan.sh and check whether firewall, listening-socket, and package sections were collected."
+            ],
+        }
 
     for name, content in (("firewall", firewall), ("socket", sockets), ("package", upgrades)):
         if any(marker in content.lower() for marker in UNAVAILABLE_MARKERS):
-            return "UNKNOWN", [f"The {name} data appears unavailable, so the review is incomplete."], [
-                "Check the relevant tool and permissions, then rerun the local scan; do not treat missing data as a clean result."
-            ]
+            return {
+                "priority": "UNKNOWN",
+                "evidence": [f"The {name} data appears unavailable, so the review is incomplete."],
+                "next_checks": [
+                    "Check the relevant tool and permissions, then rerun the local scan; do not treat missing data as a clean result."
+                ],
+            }
 
     firewall_lower = firewall.lower()
     firewall_active = "status: active" in firewall_lower
     firewall_inactive = "status: inactive" in firewall_lower
     if not firewall_active and not firewall_inactive:
-        return "UNKNOWN", ["Firewall status could not be determined from the report."], [
-            "Check firewall status using Linux Mint settings; this script does not change it."
-        ]
+        return {
+            "priority": "UNKNOWN",
+            "evidence": ["Firewall status could not be determined from the report."],
+            "next_checks": [
+                "Check firewall status using Linux Mint settings; this script does not change it."
+            ],
+        }
 
     socket_lines = [line.strip() for line in sockets.splitlines() if line.strip()]
     if not socket_lines:
-        return "UNKNOWN", ["The listening-socket section contains no usable data."], [
-            "Confirm that the local socket listing was collected and rerun the scan."
-        ]
+        return {
+            "priority": "UNKNOWN",
+            "evidence": ["The listening-socket section contains no usable data."],
+            "next_checks": [
+                "Confirm that the local socket listing was collected and rerun the scan."
+            ],
+        }
 
-    wildcard_rows = [line for line in socket_lines if any(marker in line for marker in WILDCARD_MARKERS)]
+    wildcard_rows = [
+        line for line in socket_lines
+        if any(marker in line for marker in WILDCARD_MARKERS)
+    ]
     upgrade_lines = [line.strip() for line in upgrades.splitlines() if line.strip()]
     package_rows = [
         line for line in upgrade_lines
         if "/" in line and not line.lower().startswith(("listing...", "warning:"))
     ]
+    has_upgrades = bool(package_rows)
 
-    findings = []
+    evidence = []
     if firewall_inactive:
-        findings.append("The scan reports the UFW firewall as inactive.")
+        evidence.append("The scan reports the UFW firewall as inactive.")
     else:
-        findings.append("The scan reports the UFW firewall as active.")
+        evidence.append("The scan reports the UFW firewall as active.")
+
     if wildcard_rows:
-        findings.append(
+        evidence.append(
             f"The socket report contains {len(wildcard_rows)} wildcard-bound listener row(s); "
             "a wildcard bind alone does not mean a service is reachable from the internet."
         )
     else:
-        findings.append("No wildcard-bound listening socket was identified by this simple text check.")
-    if package_rows:
-        findings.append(f"The package section appears to list {len(package_rows)} available update row(s).")
-    else:
-        findings.append("No upgradable package rows were identified in the scan output.")
+        evidence.append("No wildcard-bound listening socket was identified by this simple text check.")
 
-    has_upgrades = bool(package_rows)
+    if has_upgrades:
+        evidence.append(f"The package section appears to list {len(package_rows)} available update row(s).")
+    else:
+        evidence.append("No upgradable package rows were identified in the scan output.")
+
     if firewall_inactive and wildcard_rows:
-        level = "HIGH"
+        priority = "HIGH"
         rationale = "Combined indicators warrant prompt human review; this is not proof of exposure or compromise."
     elif firewall_inactive or wildcard_rows or has_upgrades:
-        level = "MEDIUM"
+        priority = "MEDIUM"
         rationale = "At least one item merits human review; the scan cannot establish exploitability."
     else:
-        level = "LOW"
+        priority = "LOW"
         rationale = "No indicators matched this small rule set. LOW is not a security guarantee."
 
     next_checks = []
     if firewall_inactive:
-        next_checks.append("Review firewall configuration in Linux Mint and enable an appropriate policy if suitable for your setup.")
+        next_checks.append(
+            "Review firewall configuration in Linux Mint and enable an appropriate policy if suitable for your setup."
+        )
     if wildcard_rows:
-        next_checks.append("Identify each wildcard-bound service and confirm it is needed and intended; check its own access controls.")
+        next_checks.append(
+            "Identify each wildcard-bound service and confirm it is needed and intended; check its own access controls."
+        )
     if has_upgrades:
-        next_checks.append("Review available updates and apply relevant updates through trusted system tools after normal checks.")
+        next_checks.append(
+            "Review available updates and apply relevant updates through trusted system tools after normal checks."
+        )
     if not next_checks:
-        next_checks.append("Continue routine updates and review the original scan; this report cannot detect every security issue.")
+        next_checks.append(
+            "Continue routine updates and review the original scan; this report cannot detect every security issue."
+        )
 
-    return level, [rationale, *findings], next_checks
+    return {
+        "priority": priority,
+        "evidence": [rationale, *evidence],
+        "next_checks": next_checks,
+    }
 
 
 def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     scan_path = repo_root / "logs" / "last_scan.txt"
     output_path = repo_root / "intel" / "risk_review.md"
-    report = scan_path.read_text(encoding="utf-8", errors="replace") if scan_path.exists() else ""
 
-    level, findings, next_checks = evaluate(report)
+    report = scan_path.read_text(encoding="utf-8", errors="replace") if scan_path.exists() else ""
+    result = analyze_scan(report)
+    generated_at = datetime.now(timezone.utc).isoformat()
+
     lines = [
         "# Local scan review priority",
         "",
-        f"Generated at: {datetime.now(timezone.utc).isoformat()}",
+        f"Generated at: {generated_at}",
         "",
-        f"**Result: {level}**",
+        f"**Assigned priority: `{result['priority']}`**",
         "",
         "> This is a transparent, limited review of scan text—not a validated security rating, diagnosis, or proof of compromise. It does not test reachability or change system settings.",
         "",
-        "## Evidence and interpretation",
+        "## Evidence and observations",
         "",
     ]
-    lines.extend(f"- {item}" for item in findings)
+    lines.extend(f"- {item}" for item in result["evidence"])
     lines.extend(["", "## Suggested human review", ""])
-    lines.extend(f"- {item}" for item in next_checks)
+    lines.extend(f"- {item}" for item in result["next_checks"])
     lines.extend([
         "",
         "## Limitations",
@@ -132,10 +169,11 @@ def main() -> int:
         "This small rule set can miss issues and can flag benign services or updates. Missing tool output produces UNKNOWN rather than LOW. A wildcard-bound socket is not necessarily reachable from the internet; routing, NAT, host firewall rules, and service configuration matter. LOW does not mean safe, and HIGH does not mean compromised. Verify findings with trusted system documentation or a qualified administrator.",
         "",
     ])
+
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines))
-    print(f"\n[unhackable] Saved review to {output_path}")
+    print(f"\n[unhackable] Risk review saved to {output_path}")
     return 0
 
 
