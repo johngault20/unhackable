@@ -1,8 +1,8 @@
 # unhackable
 
-**unhackable is a defensive cybersecurity learning project—not a promise that any computer can be made impossible to hack.** The name is aspirational. The real goal is to learn from real-world incidents, understand common security failures, and practice safer habits on a Linux Mint home computer.
+**unhackable is a defensive cybersecurity learning project—not a promise that any computer can be made impossible to hack.** The name is aspirational. The real goal is to help people understand common security failures, learn from real incidents, and practice safer habits that reduce the chance and impact of a compromise on their own computer.
 
-The project combines a report-only local security scan with public advisories and curated incident case studies. Its reports are educational aids: they do not prove that a machine is compromised, replace trusted security guidance, or automatically change system settings.
+The project combines a report-only local security scan with public advisories, curated incident case studies, and cautious AI-assisted explanations. It is designed to teach people and help AI explain defensive concepts. It is not an autonomous security agent: reports do not prove a machine is compromised, replace trusted guidance, or automatically change settings.
 
 ## What it does
 
@@ -77,6 +77,12 @@ The learning digest is saved to `intel/learning_digest.md`, the AI summary to `i
 
 The review script uses a small set of visible text checks: reported UFW status, availability of listening-socket data, and available-package output. It assigns `UNKNOWN` when required information is absent or a needed command was unavailable; `HIGH` only when UFW is reported inactive and the socket report includes wildcard-bound listener rows; `MEDIUM` when one or more review indicators are present; and `LOW` when none match. These are review priorities—not validated risk scores. A wildcard bind does not prove internet reachability, and LOW does not mean safe. Inspect the generated evidence and use human judgment.
 
+## Teaching and AI use
+
+Start with [`learning/README.md`](learning/README.md), [`learning/how-attack-code-works-defensively.md`](learning/how-attack-code-works-defensively.md), [`cases/README.md`](cases/README.md), and [`cases/lessons-matrix.md`](cases/lessons-matrix.md). These materials explain high-level attacker behaviors only to help learners connect incidents to prevention, detection, and recovery. They intentionally omit deployable attack code, exploit steps, and instructions for targeting systems.
+
+The local model is a teaching assistant, not a source of truth or a continuously learning system. Its input includes untrusted feed text and local logs. Verify claims against primary sources, do not paste sensitive data into services you do not control, and do not follow generated commands without human review.
+
 ## Safety and interpretation
 
 - Keep your real Mint PC behind a firewall and do not expose services to the public internet unless you have a clear need and understand the risk.
@@ -85,8 +91,3 @@ The review script uses a small set of visible text checks: reported UFW status, 
 - Treat feed articles as untrusted input and as learning leads, not proof of an attack on your machine.
 - The project does not probe third-party systems. Only test systems you own or are explicitly authorized to assess.
 - Any decoy or lab VM should follow [`docs/safe-decoy-vm.md`](docs/safe-decoy-vm.md). Never use it to attack anyone.
-
-## Learning from incidents and attacker code
-
-Start with [`cases/README.md`](cases/README.md), [`cases/lessons-matrix.md`](cases/lessons-matrix.md), and [`learning/how-attack-code-works-defensively.md`](learning/how-attack-code-works-defensively.md). The learning material describes attacker techniques at a high level, then focuses on prevention, detection, and recovery. It intentionally does not include deployable attack code, exploit steps, or instructions for targeting systems.
-
