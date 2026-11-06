@@ -6,6 +6,15 @@
 
 It brings together a local, report-only system scan, public advisories, curated incident lessons, and optional AI-assisted explanations. The aim is to help people make informed, safer decisions—not to act as an autonomous security agent.
 
+## Who this is for
+
+- Linux Mint and other home-computer users who want to understand practical security basics.
+- Beginners learning how real incidents translate into safer habits.
+- Educators who want a cautious, defensive teaching resource.
+- People experimenting with local AI who want it to explain security information without treating it as an authority.
+
+No prior cybersecurity experience is required. The project is not a substitute for professional incident response or official vendor support.
+
 ## Start here
 
 1. **Learn** — Read the [beginner curriculum](curriculum/README.md) and [glossary](curriculum/glossary.md).
@@ -43,9 +52,25 @@ python3 scripts/login_alert.py
 
 See [Login alerts](docs/login-alerts.md) for details.
 
+## A one-week beginner path
+
+This is a suggested pace, not a certification or security guarantee. You can do the reading without changing system settings.
+
+- **Day 1 — Understand the goal:** Read this page, the [curriculum](curriculum/README.md), and the [glossary](curriculum/glossary.md). Write down one thing the project can and cannot tell you.
+- **Day 2 — Protect accounts:** Review important account providers' official security pages. Enable MFA and sign-in alerts where available. Never enter real credentials into this repository's demos or scripts.
+- **Day 3 — Learn from incidents:** Read one case study and its original advisory. Separate source-backed facts from your own defensive lesson.
+- **Day 4 — Review your baseline:** Read the hardening checklist, run the local scan, and inspect its report. Don't run the project as root to fill gaps.
+- **Day 5 — Practice safe interpretation:** Run the risk review and optional local login monitor. Treat `UNKNOWN` as missing evidence, not as safe.
+- **Day 6 — Prepare recovery:** Identify important files, check your backups, and confirm you know how to restore a file.
+- **Day 7 — Review and reflect:** Generate the local learning digest or AI summary, verify one claim against its source, and note one safe habit to maintain.
+
+The [password safety simulation](learning/password-safety-demo.html) is an optional browser-only exercise. It uses a fixed fictional credential and never asks for, reads, or transmits a real password.
+
 ## Mission
 
 Help people understand how common security failures happen, learn from public incident reports, reduce unnecessary exposure on their own computer, and prepare to recover safely. The project is for education and personal defense; it is not a guarantee of security.
+
+A useful security goal is not to become invincible. It is to be **informed, harder to compromise, quick to notice problems, and prepared to recover**.
 
 ## What this project does
 
@@ -128,9 +153,9 @@ For online-account “Was this you?” notices, configure sign-in notifications 
 - [Glossary](curriculum/glossary.md)
 - [Incident case library](cases/README.md)
 - [How attack code works—defensively](learning/how-attack-code-works-defensively.md)
+- [Password safety simulation (fictional data only)](learning/password-safety-demo.html)
 - [Phishing and credential abuse](learning/phishing-and-credential-abuse.md)
 - [Ransomware and backups](learning/ransomware-and-backups.md)
 - [Home-user incident response](docs/home-user-incident-playbook.md)
 - [Login alerts](docs/login-alerts.md)
 - [Safe decoy VM plan](docs/safe-decoy-vm.md)
-

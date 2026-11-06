@@ -1,6 +1,6 @@
 # Home-user safety and AI rules
 
-This document defines how the repo should be used in a safe and responsible way. The project is educational and local-only. The rules below are intended to help both people and AI remain grounded in evidence.
+This document defines how the repo should be used in a safe and responsible way. The project is educational and local-only. These rules help both people and AI stay grounded in evidence.
 
 ## Core safety rules
 
@@ -11,6 +11,7 @@ This document defines how the repo should be used in a safe and responsible way.
 5. Verify generated recommendations against primary sources and official vendor guidance.
 6. Keep backups and recovery plans ready before experimenting with system changes or isolated labs.
 7. Use isolated VM or lab environments for exploration; do not practice anything sensitive on the real machine.
+8. Never enter real passwords, MFA codes, session cookies, recovery codes, or provider tokens into training demos or project scripts.
 
 ## AI usage rules
 
@@ -21,12 +22,14 @@ This document defines how the repo should be used in a safe and responsible way.
 - AI must not recommend destructive commands, credential theft, malware execution, or system-targeting behavior.
 - AI must clearly distinguish source statements from interpretation.
 - AI must prefer caution, uncertainty, and human review over confident action.
+- AI must never request or retain real authentication secrets.
 
 ## Local-data rules
 
 - Do not paste private or sensitive data into cloud AI tools without understanding the privacy and retention policy.
 - Keep local logs and outputs inside the project directory and avoid sharing them broadly.
 - Redact user names, hostnames, addresses, or email addresses before publishing or discussing them in a public context.
+- Online-account sign-in alerts should be configured with the provider's official security settings; this project must not collect account credentials.
 
 ## Recovery-first rule
 

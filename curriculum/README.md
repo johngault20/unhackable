@@ -1,6 +1,6 @@
 # unhackable curriculum
 
-A defensive cybersecurity learning path for home users and local AI assistants. It uses public advisories and incident case studies to teach safer habits—not to teach people how to attack systems.
+A defensive cybersecurity learning path for home users and local AI assistants. It uses public advisories, incident case studies, and safe fictional exercises to teach safer habits—not to teach people how to attack systems.
 
 > **Mission:** Learn how common security failures happen, reduce risk on your own computer, and be prepared to recover. `unhackable` is an aspirational name, not a guarantee.
 
@@ -13,6 +13,7 @@ By the end, learners should be able to:
 - Review basic Linux Mint security information and recognize missing data.
 - Improve account, update, firewall, and backup habits.
 - Configure sign-in alerts with online account providers and understand the limits of local login monitoring.
+- Explain why passwords must not be exposed or entered into untrusted demos.
 - Respond calmly to suspicious activity and know when to seek help.
 - Use local AI as an assistant while verifying claims and protecting private data.
 
@@ -58,7 +59,15 @@ By the end, learners should be able to:
 
 **Practice:** Enable sign-in notifications and MFA through the official settings of important account providers. Optionally run `python3 scripts/login_alert.py` for selected local failed-authentication events. Never give the project passwords, MFA codes, session cookies, or recovery codes.
 
-### 6. Ransomware, backups, and recovery
+### 6. Password safety simulation (fictional data only)
+
+**Learn:** A password shown or handled by an untrusted page can be exposed; real passwords should never be typed into security demos. A safe demo can teach the risk using fictional, fixed data without collecting credentials.
+
+**Read:** [Password safety simulation](../learning/password-safety-demo.html).
+
+**Practice:** Run the static HTML file locally, select the demo scenarios, and observe the explanation. The page has no password field, makes no network requests, and uses only a prewritten fake credential. Never substitute a personal or reused password.
+
+### 7. Ransomware, backups, and recovery
 
 **Learn:** Availability, protected backups, restore tests, and calm first response.
 
@@ -66,7 +75,7 @@ By the end, learners should be able to:
 
 **Practice:** Identify important files, confirm they are backed up, and check that you know how to restore a copy.
 
-### 7. AI-assisted learning
+### 8. AI-assisted learning
 
 **Learn:** Untrusted input, source verification, model limitations, and human oversight.
 
@@ -74,7 +83,7 @@ By the end, learners should be able to:
 
 **Practice:** Generate a local digest and AI summary, then verify at least one claim against its original source. Avoid sending sensitive logs to services you do not control.
 
-### 8. Safe lab practice
+### 9. Safe lab practice
 
 **Learn:** VM isolation, clean snapshots, no personal data in a lab, and authorized practice.
 
@@ -89,10 +98,11 @@ By the end, learners should be able to:
 3. Run the local scan and inspect its raw report.
 4. Generate the review priority; treat it as a prompt for human review, not a verdict.
 5. Optionally run the local login alert monitor and check whether it can read journal events.
-6. Fetch public intelligence, build a digest, and compare claims with original advisories.
-7. Study an incident case and review backup readiness.
-8. Keep any lab isolated and authorized.
+6. Try the fictional password safety simulation; never enter a real credential.
+7. Fetch public intelligence, build a digest, and compare claims with original advisories.
+8. Study an incident case and review backup readiness.
+9. Keep any lab isolated and authorized.
 
 ## Teaching and safety rules
 
-This curriculum avoids exploit instructions, malware, credential theft, evasion, destructive actions, and targeting guidance. AI may summarize and explain, but must not act autonomously, make unsupported compromise claims, or change system settings. People remain responsible for verifying sources and choosing actions.
+This curriculum avoids exploit instructions, malware, credential theft, evasion, destructive actions, and targeting guidance. Password demonstrations must use fictional data only and must never collect or reveal user-entered secrets. AI may summarize and explain, but must not act autonomously, make unsupported compromise claims, or change system settings. People remain responsible for verifying sources and choosing actions.
