@@ -13,6 +13,7 @@ The project combines a report-only local security scan with public advisories, c
 - Can ask a local Ollama model to summarize local observations and explain lessons from the case studies and feed entries.
 - Offers a small, transparent scan review priority (`LOW`, `MEDIUM`, `HIGH`, or `UNKNOWN`) with evidence and limitations.
 - Includes a conservative, isolated, offline-first decoy VM learning plan.
+- Adds practical learning on phishing, credential abuse, ransomware, local hardening, and personal incident response.
 
 ## What it does not do
 
@@ -30,8 +31,8 @@ The project combines a report-only local security scan with public advisories, c
 - `scripts/risk_review.py` - classify scan output with a small, report-only rule set
 - `scripts/learning_digest.py` - combine curated lessons and available feed metadata into a local learning document
 - `cases/` - curated incident case studies and a lessons matrix
-- `learning/` - high-level explanations of attacker behavior and defensive concepts
-- `docs/safe-decoy-vm.md` - offline-first isolated VM safety plan
+- `learning/` - high-level explanations of attacker behavior, phishing, credential abuse, ransomware, and Linux Mint hardening concepts
+- `docs/` - safe VM and home-user incident-response guidance
 - `requirements.txt` - Python dependencies
 - `config/ollama-local.service` - example local-only service file
 
@@ -73,13 +74,20 @@ Generated reports and fetched feed data are local and git-ignored.
 
 The learning digest is saved to `intel/learning_digest.md`, the AI summary to `intel/learning_summary.md`, and the scan review to `intel/risk_review.md`. The digest works offline and case studies remain available if a feed is unavailable. Feed coverage varies and does not replace checking original advisories. Ollama must already be installed with the selected model available; it should listen on loopback only.
 
-## Risk-review interpretation
+## Learning and AI use
 
-The review script uses a small set of visible text checks: reported UFW status, availability of listening-socket data, and available-package output. It assigns `UNKNOWN` when required information is absent or a needed command was unavailable; `HIGH` only when UFW is reported inactive and the socket report includes wildcard-bound listener rows; `MEDIUM` when one or more review indicators are present; and `LOW` when none match. These are review priorities—not validated risk scores. A wildcard bind does not prove internet reachability, and LOW does not mean safe. Inspect the generated evidence and use human judgment.
+Start with:
+- [`learning/README.md`](learning/README.md)
+- [`learning/how-attack-code-works-defensively.md`](learning/how-attack-code-works-defensively.md)
+- [`learning/linux-mint-home-hardening.md`](learning/linux-mint-home-hardening.md)
+- [`learning/phishing-and-credential-abuse.md`](learning/phishing-and-credential-abuse.md)
+- [`learning/ransomware-and-backups.md`](learning/ransomware-and-backups.md)
+- [`cases/README.md`](cases/README.md)
+- [`cases/lessons-matrix.md`](cases/lessons-matrix.md)
+- [`docs/home-user-incident-playbook.md`](docs/home-user-incident-playbook.md)
+- [`docs/safe-decoy-vm.md`](docs/safe-decoy-vm.md)
 
-## Teaching and AI use
-
-Start with [`learning/README.md`](learning/README.md), [`learning/how-attack-code-works-defensively.md`](learning/how-attack-code-works-defensively.md), [`cases/README.md`](cases/README.md), and [`cases/lessons-matrix.md`](cases/lessons-matrix.md). These materials explain high-level attacker behaviors only to help learners connect incidents to prevention, detection, and recovery. They intentionally omit deployable attack code, exploit steps, and instructions for targeting systems.
+These materials explain high-level attacker behaviors only to help learners connect incidents to prevention, detection, and recovery. They intentionally omit deployable attack code, exploit steps, and instructions for targeting systems.
 
 The local model is a teaching assistant, not a source of truth or a continuously learning system. Its input includes untrusted feed text and local logs. Verify claims against primary sources, do not paste sensitive data into services you do not control, and do not follow generated commands without human review.
 
