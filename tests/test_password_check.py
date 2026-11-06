@@ -3,32 +3,35 @@ import unittest
 from scripts.password_check import assess_password, has_obvious_pattern
 
 
-class PasswordCheckTests(unittest.TestCase):
-    def test_empty_input_is_not_safe_or_strong(self):
-        self.assertEqual(assess_password("")["score"], 0)
+class PasswordAssessmentTests(unittest.TestCase):
+    def test_empty_input_is_not_scored_as_safe(self):
+        result = assess_password("")
+        self.assertEqual(result["score"], 0)
+        self.assertIn("Enter a new candidate", result["label"])
 
-    def test_common_password_example_is_weak(self):
-        self.assertEqual(assess_password("password123")["score"], 0)
+    def test_common_and_leetspeak_passwords_are_low(self):
+        self.assertEqual(assess_password("password")["score"], 0)
+        self.assertEqual(assess_password("P@ssw0rd123!")["score"], 0)
 
-    def test_longer_candidate_scores_higher_than_short_candidate(self):
+    def test_long_unpatterned_candidate_scores_higher_than_short_candidate(self):
         short = assess_password("ab12")
-        longer = assess_password("violet-cabin-moon-forest-93!")
+        longer = assess_password("River-candle-orbit-window-72")
         self.assertGreater(longer["score"], short["score"])
 
-    def test_obvious_sequences_and_repetition_are_flagged(self):
-        self.assertTrue(has_obvious_pattern("myabcdephrase"))
-        self.assertTrue(has_obvious_pattern("ZZZZ-safe-example"))
+    def test_sequences_and_repetition_are_detected(self):
+        self.assertTrue(has_obvious_pattern("my-a-b-c-d-phrase"))
+        self.assertTrue(has_obvious_pattern("abcdabcdabcd"))
         self.assertFalse(has_obvious_pattern("violet-cabin-moon"))
 
-    def test_assessment_does_not_return_candidate(self):
-        candidate = "fictional-long-candidate-482!"
+    def test_result_does_not_include_candidate(self):
+        candidate = "A fictional candidate phrase 93!"
         result = assess_password(candidate)
         self.assertNotIn(candidate, repr(result))
 
-    def test_pattern_penalty_makes_result_more_conservative(self):
-        regular = assess_password("violet-cabin-moon-forest-93!")
-        patterned = assess_password("violet-cabin-moon-forest-abcde!")
-        self.assertLessEqual(patterned["score"], regular["score"])
+    def test_guess_time_is_not_claimed(self):
+        result = assess_password("Longer-fictitious-candidate-value-882")
+        self.assertIn("cannot check", result["advice"])
+        self.assertNotIn("seconds", result["advice"])
 
 
 if __name__ == "__main__":
