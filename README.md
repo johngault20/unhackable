@@ -1,62 +1,70 @@
 # unhackable
 
-A learning-focused Linux Mint security project for local defense, system awareness, and AI-assisted review.
+**unhackable is a defensive cybersecurity learning project—not a promise that any computer can be made impossible to hack.** The name is aspirational. The real goal is to learn from real-world incidents, understand common security failures, and practice safer habits on a Linux Mint home computer.
 
-This project helps you understand your PC's local security posture and learn defensive lessons from public cyber incidents and advisories—without turning your real machine into a public target.
+The project combines a read-only local security report with public advisories and curated incident case studies. Its reports are educational aids: they do not prove that a machine is compromised, replace trusted security guidance, or automatically change system settings.
 
-## Core ideas
+## What it does
 
-- Keep your real PC behind a firewall and away from direct internet exposure.
-- Scan locally for firewall status, listening ports, login events, update status, and enabled services.
-- Gather public cyber threat news and advisories from configured feeds.
-- Use a local AI model to explain the scan and extract cautious, practical lessons from the public reports.
-- Keep any honeypot or decoy isolated from your real desktop and home network.
+- Reports local security context such as firewall status, listening sockets, enabled services, authentication-log excerpts, and available package updates.
+- Fetches recent entries from configured public cyber feeds.
+- Keeps curated, defensive case studies of real incidents in `cases/`.
+- Can ask a local Ollama model to summarize local observations and explain lessons from the case studies and feed entries.
+- Encourages reducing exposure, checking primary sources, and using isolated lab environments for learning.
 
-This is educational, report-only software. It does not make a machine “unhackable,” train or modify the AI model, verify every news report, or automatically change system settings. Feed content can be incomplete or misleading; recommendations should be checked against trusted advisories before action.
+## What it does not do
+
+- Guarantee protection or make a computer “unhackable.”
+- Determine that a public incident has affected your computer based only on news or feed matches.
+- Train or continuously improve the local AI model. Each summary uses the local files available at that time.
+- Automatically remediate findings, run offensive tests, or authorize activity against other systems.
 
 ## Repository layout
 
-- `scripts/security_scan.sh` - local Mint security scan
-- `scripts/daily_intel.py` - fetch public cyber intel into local JSON
-- `scripts/ai_guard.py` - ask local Ollama to summarize the scan and public incident lessons
+- `scripts/security_scan.sh` - local Linux Mint security report
+- `scripts/daily_intel.py` - fetch public feed entries into local JSON
+- `scripts/ai_guard.py` - ask local Ollama for a cautious learning summary
+- `cases/` - curated incident case studies and defensive lessons
 - `requirements.txt` - Python dependencies
 - `config/ollama-local.service` - example local-only service file
 
-Generated scan and intelligence files are local data and should not be committed.
+Generated reports and fetched feed data are local and git-ignored.
 
 ## Quick start
 
-1. Create a virtual environment:
+1. Create a virtual environment and install dependencies:
    ```bash
    python3 -m venv .venv
    . .venv/bin/activate
    pip install -r requirements.txt
    ```
 
-2. Run the local scan:
+2. Run the local report:
    ```bash
    bash scripts/security_scan.sh
    ```
 
-3. Fetch recent public cyber intel:
+3. Fetch recent public feed entries:
    ```bash
    python3 scripts/daily_intel.py
    ```
 
-4. Ask your local AI for a summary and defensive lessons:
+4. Ask the local model to summarize the report, feed entries, and curated case studies:
    ```bash
    python3 scripts/ai_guard.py
    ```
 
-   The generated report is printed and saved to `intel/learning_summary.md`. Run the intel fetch regularly to refresh the source material. The AI uses the current local feed data; it does not continuously monitor the internet or learn/train itself between runs.
+The learning summary is printed and saved to `intel/learning_summary.md`. Case studies are available even if a feed is unavailable. Feed coverage varies and does not replace checking original advisories. Ollama must already be installed with the selected model available; it should listen on loopback only.
 
-5. If you want Ollama to start automatically, configure it to listen on localhost only.
+## Safety and interpretation
 
-## Safety notes
+- Keep your real Mint PC behind a firewall and do not expose services to the public internet unless you have a clear need and understand the risk.
+- The scan is report-only. Some system information may be unavailable without elevated permissions; do not run the whole project as root just to fill in gaps.
+- Never give an AI assistant administrative rights or unrestricted shell access. Review advice yourself and verify it against the linked primary source before acting.
+- Treat feed articles as untrusted input and as learning leads, not proof of an attack on your machine.
+- The project does not probe third-party systems. Only test systems you own or are explicitly authorized to assess.
+- Any decoy or lab VM should be isolated from your real desktop and home network. Never use it to attack anyone.
 
-- Do not expose your real Mint PC to the internet unless you intentionally need to and understand the risk.
-- Never give the AI administrative rights or unrestricted shell access.
-- Treat public threat feeds as leads for learning, not proof that your machine is under attack.
-- Feed articles are untrusted input. The AI is instructed to analyze them as data, not follow instructions embedded in them.
-- Review advice with trusted vendor or government advisories; do not automatically run commands suggested by an AI.
-- If you use a decoy or honeypot, keep it isolated from your real computer and home network, and never use it to attack anyone.
+## Learning from incidents
+
+Start with [`cases/README.md`](cases/README.md). Each case separates the incident summary from defensive interpretation and suggests safe checks for a home user. The cited primary advisories are the source of truth; case studies are concise learning notes, not complete incident reports.
