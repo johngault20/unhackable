@@ -10,6 +10,7 @@ The project combines a read-only local security report with public advisories an
 - Fetches recent entries from configured public cyber feeds.
 - Keeps curated, defensive case studies of real incidents in `cases/`.
 - Can ask a local Ollama model to summarize local observations and explain lessons from the case studies and feed entries.
+- Offers a small, transparent scan review priority (`LOW`, `MEDIUM`, `HIGH`, or `UNKNOWN`) with evidence and limitations.
 - Encourages reducing exposure, checking primary sources, and using isolated lab environments for learning.
 
 ## What it does not do
@@ -24,7 +25,8 @@ The project combines a read-only local security report with public advisories an
 - `scripts/security_scan.sh` - local Linux Mint security report
 - `scripts/daily_intel.py` - fetch public feed entries into local JSON
 - `scripts/ai_guard.py` - ask local Ollama for a cautious learning summary
-- `cases/` - curated incident case studies and defensive lessons
+- `scripts/risk_review.py` - classify scan output with a small, report-only rule set
+- `cases/` - curated incident case studies and a lessons matrix
 - `requirements.txt` - Python dependencies
 - `config/ollama-local.service` - example local-only service file
 
@@ -49,12 +51,21 @@ Generated reports and fetched feed data are local and git-ignored.
    python3 scripts/daily_intel.py
    ```
 
-4. Ask the local model to summarize the report, feed entries, and curated case studies:
+4. Generate the local scan review priority:
+   ```bash
+   python3 scripts/risk_review.py
+   ```
+
+5. Ask the local model to summarize the report, feed entries, and curated case studies:
    ```bash
    python3 scripts/ai_guard.py
    ```
 
-The learning summary is printed and saved to `intel/learning_summary.md`. Case studies are available even if a feed is unavailable. Feed coverage varies and does not replace checking original advisories. Ollama must already be installed with the selected model available; it should listen on loopback only.
+The learning summary is printed and saved to `intel/learning_summary.md`; the scan review is saved to `intel/risk_review.md`. Case studies are available even if a feed is unavailable. Feed coverage varies and does not replace checking original advisories. Ollama must already be installed with the selected model available; it should listen on loopback only.
+
+## Risk-review interpretation
+
+The review script uses a small set of visible text checks: firewall status, wildcard-bound listening-socket rows, and package-update rows. It assigns `HIGH` only when an inactive UFW status and wildcard-bound listener are both present; `MEDIUM` when one or more of those simple indicators is present; `LOW` when none match; and `UNKNOWN` when required scan data is missing or unclear. These are review priorities—not validated risk scores. A wildcard bind does not prove internet reachability, and LOW does not mean safe. Inspect the generated evidence and use human judgment.
 
 ## Safety and interpretation
 
@@ -67,4 +78,4 @@ The learning summary is printed and saved to `intel/learning_summary.md`. Case s
 
 ## Learning from incidents
 
-Start with [`cases/README.md`](cases/README.md). Each case separates the incident summary from defensive interpretation and suggests safe checks for a home user. The cited primary advisories are the source of truth; case studies are concise learning notes, not complete incident reports.
+Start with [`cases/README.md`](cases/README.md) and [`cases/lessons-matrix.md`](cases/lessons-matrix.md). Each case separates incident reporting from defensive interpretation and suggests safe checks for a home user. The cited primary advisories are the source of truth; case studies are concise learning notes, not complete incident reports.
