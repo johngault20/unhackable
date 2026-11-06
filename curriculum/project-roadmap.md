@@ -1,51 +1,32 @@
 # Project roadmap
 
-This roadmap helps define the educational direction of the repo over time.
+This roadmap keeps `unhackable` focused on being a useful, honest learning resource for people and local AI assistants.
 
-## Phase 1: Defensive baseline
+## Foundation
 
-Completed or in progress:
-- local scan
-- AI-assisted learning summary
-- case-study library
-- Linux Mint hardening guide
-- safe VM guidance
-- basic risk review output
-- local learning digest
+- Local, report-only Linux Mint scan.
+- Cautious risk-review priority with `LOW`, `MEDIUM`, `HIGH`, and `UNKNOWN` outcomes.
+- Public feed digest and curated incident case studies.
+- Defensive learning modules for phishing, ransomware, hardening, and recovery.
+- Optional best-effort local failed-login desktop notifications.
+- Guidance for provider-managed online-account sign-in alerts.
+- AI safeguards and isolated VM learning guidance.
 
-## Phase 2: Learning depth
+## Next improvements
 
-Planned additions:
-- improved beginner learning path
-- attack-pattern catalogue
-- credential abuse and phishing modules
-- ransomware and backup recovery modules
-- autonomous local training notes for the AI assistant
-- better summarization of public advisories and incident context
+- Add automated tests using synthetic scan reports and journal records; never require real credentials or external targets.
+- Improve scan parsing with structured output and explicit collection status instead of relying only on text matching.
+- Add source freshness and provenance fields to the learning digest.
+- Expand case studies from verified primary sources, recording publication date and review date.
+- Document supported Mint versions, desktop notification requirements, and journald permission differences.
+- Add an accessibility review for notification wording, screen readers, and quiet-hours behavior.
 
-## Phase 3: Practical home-user tools
+## Out of scope
 
-Planned additions:
-- more structured checklists
-- a simple YAML or JSON rule set for risk factors
-- a more advanced home-user incident dashboard
-- restored backup and recovery script templates
-- a cross-platform safe-learning notes package
+- Guaranteeing that a PC is unhackable.
+- Automatically blocking addresses, disabling accounts, deleting files, or remediating findings.
+- Collecting online account credentials, MFA codes, session tokens, or recovery keys.
+- Scanning third-party targets or providing working exploit and malware code.
+- Sending raw logs or user data to remote AI services by default.
 
-## Phase 4: Community and documentation
-
-Planned additions:
-- user guide for safe VM lab setup
-- training notes for educators or workshop leaders
-- a glossary of common threat terms explained simply
-- more case studies drawn from reputable public advisories
-
-## Project principles
-
-- Keep it educational and defensive.
-- Keep it local and low-risk.
-- Keep AI output carefully constrained and evidence-based.
-- Keep the project grounded in primary sources.
-- Keep the experience realistic for a home user, not a cyber operator.
-
-This roadmap helps the project remain useful as a teaching repo, not as a dangerous or misleading pseudo-security tool.
+All proposed features should remain transparent, opt-in, local-first, non-destructive, and understandable to a home user.
